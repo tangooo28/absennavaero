@@ -82,7 +82,7 @@ client.once("ready", async () => {
         "• Klik **OFF DUTY** saat selesai bertugas.\n\n" +
         "Seluruh aktivitas akan tercatat otomatis di channel log."
       )
-      .setFooter({ text: "Sistem Absensi Duty" })
+      .setFooter({ text: "Sistem Absensi Duty by Falcon 01" })
       .setTimestamp();
 
     await absenChannel.send({
@@ -616,4 +616,5 @@ client.on("messageCreate", async (message) => {
 
 // ==== Jalankan bot ====
 client.login(TOKEN);
+
 
