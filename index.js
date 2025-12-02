@@ -10,9 +10,9 @@ const {
 } = require("discord.js");
 
 // ================== CONFIG ==================
-const TOKEN = "MTQ0NTMyOTE0NjU5ODI2NDg3NA.GAdB9E.G0Q9wYGXjWy8qRl_thPvmYRckHDUsblvPlRJt0";
-const ABSEN_CHANNEL_ID = "1445332264677540071"; // channel absensi (tombol ON/OFF)
-const LOG_CHANNEL_ID = "1445323826253660170";   // channel log absensi
+const TOKEN = process.env.TOKEN;
+const ABSEN_CHANNEL_ID = process.env.ABSEN_CHANNEL_ID;
+const LOG_CHANNEL_ID = process.env.LOG_CHANNEL_ID;
 // ============================================
 
 // Inisialisasi client/bot
@@ -616,3 +616,4 @@ client.on("messageCreate", async (message) => {
 
 // ==== Jalankan bot ====
 client.login(TOKEN);
+
