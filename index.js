@@ -25,6 +25,11 @@ const client = new Client({
   partials: [Partials.Channel]
 });
 
+// ==== Helper: embed dengan footer global ====
+function makeEmbed() {
+  return new EmbedBuilder().setFooter({ text: "Duty System by Falcon 01" });
+}
+
 // ==== Helper: format waktu ke zona Asia/Jakarta ====
 function formatWaktuJakarta(date = new Date()) {
   return new Intl.DateTimeFormat("id-ID", {
@@ -73,7 +78,7 @@ client.once("ready", async () => {
     const absenChannel = await client.channels.fetch(ABSEN_CHANNEL_ID);
 
     // Embed info di channel absensi
-    const infoEmbed = new EmbedBuilder()
+    const infoEmbed = makeEmbed()
       .setColor(0x1abc9c)
       .setTitle("📋 Panel Absensi Duty")
       .setDescription(
@@ -82,7 +87,6 @@ client.once("ready", async () => {
         "• Klik **OFF DUTY** saat selesai bertugas.\n\n" +
         "Seluruh aktivitas akan tercatat otomatis di channel log."
       )
-      .setFooter({ text: "Sistem Absensi Duty by Falcon 01" })
       .setTimestamp();
 
     await absenChannel.send({
@@ -165,7 +169,7 @@ async function getUserEventsLast7Days(logChannel, userId, now) {
 
 // ==== Helper: ambil SEMUA event user (map) dalam 7 hari terakhir ====
 async function getAllUserEventsLast7Days(logChannel, now) {
-  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 1000);
   const messages = await fetchMessagesSince(logChannel, weekAgo);
 
   /** @type {Map<string, {type: 'on'|'off', time: Date}[]>} */
@@ -266,7 +270,7 @@ client.on("interactionCreate", async (interaction) => {
 
   // ========== ON DUTY ==========
   if (interaction.customId === "on_duty") {
-    const logEmbed = new EmbedBuilder()
+    const logEmbed = makeEmbed()
       .setColor(0x2ecc71)
       .setAuthor({
         name: displayName,
@@ -290,12 +294,11 @@ client.on("interactionCreate", async (interaction) => {
           inline: false
         }
       )
-      .setFooter({ text: "Sistem Absensi Duty - Log Otomatis" })
       .setTimestamp();
 
     await logChannel.send({ embeds: [logEmbed] });
 
-    const replyEmbed = new EmbedBuilder()
+    const replyEmbed = makeEmbed()
       .setColor(0x2ecc71)
       .setTitle("🟢 Status Duty Diperbarui")
       .setDescription(
@@ -314,7 +317,6 @@ client.on("interactionCreate", async (interaction) => {
         }
       )
       .setThumbnail(user.displayAvatarURL({ size: 128 }))
-      .setFooter({ text: "Informasi ini hanya terlihat oleh kamu." })
       .setTimestamp();
 
     await interaction.reply({
@@ -341,7 +343,7 @@ client.on("interactionCreate", async (interaction) => {
     const hoursWeek = totalMs / (1000 * 60 * 60);
     const hoursDay = totalMsDay / (1000 * 60 * 60);
 
-    const logEmbed = new EmbedBuilder()
+    const logEmbed = makeEmbed()
       .setColor(0xe74c3c)
       .setAuthor({
         name: displayName,
@@ -375,12 +377,11 @@ client.on("interactionCreate", async (interaction) => {
           inline: false
         }
       )
-      .setFooter({ text: "Sistem Absensi Duty - Log Otomatis" })
       .setTimestamp();
 
     await logChannel.send({ embeds: [logEmbed] });
 
-    const replyEmbed = new EmbedBuilder()
+    const replyEmbed = makeEmbed()
       .setColor(0xe74c3c)
       .setTitle("🔴 Status Duty Diperbarui")
       .setDescription(
@@ -409,7 +410,6 @@ client.on("interactionCreate", async (interaction) => {
         }
       )
       .setThumbnail(user.displayAvatarURL({ size: 128 }))
-      .setFooter({ text: "Informasi ini hanya terlihat oleh kamu." })
       .setTimestamp();
 
     await interaction.reply({
@@ -439,7 +439,7 @@ client.on("messageCreate", async (message) => {
     return;
   }
 
-    // ========== !weeklyall ==========
+  // ========== !weeklyall ==========
   if (lower.startsWith("!weeklyall")) {
     try {
       const now = new Date();
@@ -473,7 +473,7 @@ client.on("messageCreate", async (message) => {
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       const periodeText = `${formatWaktuJakarta(weekAgo)} s/d ${formatWaktuJakarta(now)}`;
 
-      const embed = new EmbedBuilder()
+      const embed = makeEmbed()
         .setColor(0x9b59b6)
         .setTitle("📊 Rekap Duty 7 Hari Terakhir (Semua User)")
         .setDescription(
@@ -485,7 +485,6 @@ client.on("messageCreate", async (message) => {
           value: periodeText,
           inline: false
         })
-        .setFooter({ text: "Sistem Absensi Duty - Rekap Mingguan Global" })
         .setTimestamp();
 
       // Discord embed max 25 fields, sisakan 1 utk periode → pakai max 24 user
@@ -541,7 +540,6 @@ client.on("messageCreate", async (message) => {
     return;
   }
 
-
   // ========== !weekly @user ==========
   if (lower.startsWith("!weekly")) {
     const mentionedMember = message.mentions.members.first();
@@ -565,7 +563,7 @@ client.on("messageCreate", async (message) => {
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       const periodeText = `${formatWaktuJakarta(weekAgo)} s/d ${formatWaktuJakarta(now)}`;
 
-      const summaryEmbed = new EmbedBuilder()
+      const summaryEmbed = makeEmbed()
         .setColor(0x3498db)
         .setTitle("📊 Rekap Duty 7 Hari Terakhir (Per User)")
         .setThumbnail(targetUser.displayAvatarURL({ size: 128 }))
@@ -601,7 +599,6 @@ client.on("messageCreate", async (message) => {
             inline: false
           }
         )
-        .setFooter({ text: "Sistem Absensi Duty - Rekap Mingguan" })
         .setTimestamp();
 
       await message.reply({ embeds: [summaryEmbed] });
@@ -616,5 +613,3 @@ client.on("messageCreate", async (message) => {
 
 // ==== Jalankan bot ====
 client.login(TOKEN);
-
-
